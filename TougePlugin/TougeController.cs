@@ -59,6 +59,25 @@ public class TougeController : ControllerBase
         return new PhysicalFileResult(Path.Join(AssetsBasePath, "fonts.zip"), "application/zip");
     }
 
+    [HttpGet("Toggle.png")]
+    public IActionResult GetToggleImage()
+    {
+        return new PhysicalFileResult(Path.Join(AssetsBasePath, "Toggle.png"), "image/png");
+    }
+
+    [HttpGet("avatars/{*filename}")]
+    public IActionResult GetAvatarFile(string filename)
+    {
+        var filePath = Path.Combine(AssetsBasePath, "avatars", filename ?? "");
+        if (!System.IO.File.Exists(filePath))
+            return NotFound();
+        var contentType = "application/octet-stream";
+        var ext = Path.GetExtension(filePath).ToLowerInvariant();
+        if (ext == ".png") contentType = "image/png";
+        else if (ext == ".jpg" || ext == ".jpeg") contentType = "image/jpeg";
+        else if (ext == ".gif") contentType = "image/gif";
+        return new PhysicalFileResult(filePath, contentType);
+    }
 
 
 }
